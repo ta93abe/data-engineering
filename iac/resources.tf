@@ -42,7 +42,7 @@ resource "snowflake_warehouse" "dbt_warehouse" {
 resource "snowflake_service_user" "dbt_user" {
   name              = "DBT"
   login_name        = "DBT"
-  rsa_public_key    = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzmgpaMejMTheLtx+EY2LcFzrH2zjblheSjd0+GtpCsHFOagKB2CRcSAZM5+Mu/0iiOKHVyMP+1jDNyeU4OWWI8jkiogCA9rszK51fH6znD7te1DnzWk2GVPz24U9rW8UH1NlyMkjpJx+OIavtJk3bMRd30zSqTg+Qfbtl7QZHAMzx9Dzv1j5VztH5c4783qDaw8WX9MpjFgRW2NN3AmU8mLPqTbK+6JlBjfoVO4WLudQvpVuVb6ZIBBYCo3Mywq1rIzrP79xGqoyEN8THvDJnSO1j5gq7BqoNeLaJ0Di7M1z9Do34JLCm0LJCD7Y9vkZaPEl66jJOrWc6MZyj+/y8wIDAQAB9"
+  rsa_public_key    = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzmgpaMejMTheLtx+EY2LcFzrH2zjblheSjd0+GtpCsHFOagKB2CRcSAZM5+Mu/0iiOKHVyMP+1jDNyeU4OWWI8jkiogCA9rszK51fH6znD7te1DnzWk2GVPz24U9rW8UH1NlyMkjpJx+OIavtJk3bMRd30zSqTg+Qfbtl7QZHAMzx9Dzv1j5VztH5c4783qDaw8WX9MpjFgRW2NN3AmU8mLPqTbK+6JlBjfoVO4WLudQvpVuVb6ZIBBYCo3Mywq1rIzrP79xGqoyEN8THvDJnSO1j5gq7BqoNeLaJ0Di7M1z9Do34JLCm0LJCD7Y9vkZaPEl66jJOrWc6MZyj+/y8wIDAQAB"
   default_role      = snowflake_account_role.dbt_role.name
   default_warehouse = snowflake_warehouse.dbt_warehouse.name
 }
