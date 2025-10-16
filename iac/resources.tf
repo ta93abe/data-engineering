@@ -36,6 +36,30 @@ resource "snowflake_schema" "marts_schema_in_production" {
   comment  = "Schema for marts data"
 }
 
+resource "snowflake_schema" "raw_schema_in_development" {
+  name     = "RAW"
+  database = snowflake_database.development_database.name
+  comment  = "Schema for raw data"
+}
+
+resource "snowflake_schema" "staging_schema_in_development" {
+  name     = "STAGING"
+  database = snowflake_database.development_database.name
+  comment  = "Schema for staging data"
+}
+
+resource "snowflake_schema" "intermediate_schema_in_development" {
+  name     = "INTERMEDIATE"
+  database = snowflake_database.development_database.name
+  comment  = "Schema for intermediate data"
+}
+
+resource "snowflake_schema" "marts_schema_in_development" {
+  name     = "MARTS"
+  database = snowflake_database.development_database.name
+  comment  = "Schema for marts data"
+}
+
 resource "snowflake_account_role" "dbt_role" {
   name = "DBT_ROLE"
 }
