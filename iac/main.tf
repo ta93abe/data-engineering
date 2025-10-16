@@ -4,6 +4,13 @@ terraform {
       source = "snowflakedb/snowflake"
     }
   }
+  cloud {
+    organization = "ta93abe"
+    hostname     = "app.terraform.io"
+    workspaces {
+      name = "data-engineering"
+    }
+  }
 }
 
 provider "snowflake" {
