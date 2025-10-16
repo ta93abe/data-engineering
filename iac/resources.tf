@@ -1,3 +1,7 @@
+locals {
+  sysadmin_role = "SYSADMIN"
+}
+
 resource "snowflake_database" "production_database" {
   name                           = "PRODUCTION_DB"
   drop_public_schema_on_creation = true
@@ -153,6 +157,98 @@ resource "snowflake_grant_privileges_to_account_role" "grant_all_on_future_funct
     future {
       object_type_plural = "FUNCTIONS"
       in_database        = snowflake_database.production_database.name
+    }
+  }
+}
+
+# SYSADMIN grants for DEVELOPMENT_DB
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_usage_on_development_database" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.development_database.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_all_schemas_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["USAGE", "CREATE TABLE", "CREATE VIEW", "CREATE FUNCTION"]
+  on_schema {
+    all_schemas_in_database = snowflake_database.development_database.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_future_schemas_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["USAGE", "CREATE TABLE", "CREATE VIEW", "CREATE FUNCTION"]
+  on_schema {
+    future_schemas_in_database = snowflake_database.development_database.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_all_tables_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES"]
+  on_schema_object {
+    all {
+      object_type_plural = "TABLES"
+      in_database        = snowflake_database.development_database.name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_future_tables_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["SELECT", "INSERT", "UPDATE", "DELETE", "TRUNCATE", "REFERENCES"]
+  on_schema_object {
+    future {
+      object_type_plural = "TABLES"
+      in_database        = snowflake_database.development_database.name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_all_views_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["SELECT", "REFERENCES"]
+  on_schema_object {
+    all {
+      object_type_plural = "VIEWS"
+      in_database        = snowflake_database.development_database.name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_future_views_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["SELECT", "REFERENCES"]
+  on_schema_object {
+    future {
+      object_type_plural = "VIEWS"
+      in_database        = snowflake_database.development_database.name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_all_functions_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["USAGE"]
+  on_schema_object {
+    all {
+      object_type_plural = "FUNCTIONS"
+      in_database        = snowflake_database.development_database.name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_future_functions_dev" {
+  account_role_name = local.sysadmin_role
+  privileges        = ["USAGE"]
+  on_schema_object {
+    future {
+      object_type_plural = "FUNCTIONS"
+      in_database        = snowflake_database.development_database.name
     }
   }
 }
