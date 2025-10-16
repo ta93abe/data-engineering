@@ -358,7 +358,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_evidence_usage_on_m
   account_role_name = snowflake_account_role.evidence_role.name
   privileges        = ["USAGE"]
   on_schema {
-    schema_name = snowflake_schema.marts_schema_in_production.name
+    schema_name = snowflake_schema.marts_schema_in_production.fully_qualified_name
   }
 }
 
