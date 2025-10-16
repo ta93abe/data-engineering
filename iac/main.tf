@@ -21,5 +21,5 @@ provider "snowflake" {
   authenticator            = "SNOWFLAKE_JWT"
   private_key              = var.snowflake_private_key
   warehouse                = var.snowflake_warehouse
-  preview_features_enabled = true
+  preview_features_enabled = ["snowflake_user_programmatic_access_token_resource"]
 }
