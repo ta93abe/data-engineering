@@ -291,6 +291,7 @@ resource "snowflake_user" "steep_user" {
   login_name        = "STEEP"
   default_role      = snowflake_account_role.steep_role.name
   default_warehouse = snowflake_warehouse.steep_warehouse.name
+  network_policy    = snowflake_network_policy.allow_steep_connection.name
 }
 
 resource "snowflake_user_programmatic_access_token" "steep_access_token" {
@@ -298,3 +299,17 @@ resource "snowflake_user_programmatic_access_token" "steep_access_token" {
   name = "STEEP_TOKEN"
 }
 
+resource "snowflake_network_rule" "enable_incoming_from_steep" {
+  name       = "ENABLE_INCOMING_FROM_STEEP"
+  mode       = "INGRESS"
+  type       = "IPV4"
+  value_list = ["34.78.69.173/32"]
+  database   = snowflake_database.production_database.name
+  schema     = snowflake_schema.marts_schema_in_production.name
+}
+
+resource "snowflake_network_policy" "allow_steep_connection" {
+  name                      = "ALLOW_STEEP_CONNECTION"
+  comment                   = "Allow incoming connections from Steep"
+  allowed_network_rule_list = [snowflake_network_rule.enable_incoming_from_steep.fully_qualified_name]
+}
