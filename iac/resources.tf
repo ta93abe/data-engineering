@@ -3,6 +3,11 @@ resource "snowflake_database" "production_database" {
   drop_public_schema_on_creation = true
 }
 
+resource "snowflake_database" "development_database" {
+  name                           = "DEVELOPMENT_DB"
+  drop_public_schema_on_creation = true
+}
+
 resource "snowflake_schema" "raw_schema_in_production" {
   name     = "RAW"
   database = snowflake_database.production_database.name
