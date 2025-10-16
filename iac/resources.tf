@@ -94,6 +94,11 @@ resource "snowflake_grant_account_role" "grant_role_to_user" {
   user_name = snowflake_user.dbt_user.name
 }
 
+resource "snowflake_grant_account_role" "grant_dbt_role_to_sysadmin" {
+  role_name        = snowflake_account_role.dbt_role.name
+  parent_role_name = local.sysadmin_role
+}
+
 resource "snowflake_grant_privileges_to_account_role" "grant_usage_on_database" {
   account_role_name = snowflake_account_role.dbt_role.name
   privileges        = ["USAGE", "CREATE SCHEMA"]
@@ -294,6 +299,11 @@ resource "snowflake_user" "steep_user" {
   network_policy    = snowflake_network_policy.allow_steep_connection.name
 }
 
+resource "snowflake_grant_account_role" "grant_steep_role_to_sysadmin" {
+  role_name        = snowflake_account_role.steep_role.name
+  parent_role_name = local.sysadmin_role
+}
+
 resource "snowflake_user_programmatic_access_token" "steep_access_token" {
   user = snowflake_user.steep_user.name
   name = "STEEP_TOKEN"
@@ -334,6 +344,11 @@ resource "snowflake_user" "evidence_user" {
 resource "snowflake_grant_account_role" "grant_evidence_role_to_user" {
   role_name = snowflake_account_role.evidence_role.name
   user_name = snowflake_user.evidence_user.name
+}
+
+resource "snowflake_grant_account_role" "grant_evidence_role_to_sysadmin" {
+  role_name        = snowflake_account_role.evidence_role.name
+  parent_role_name = local.sysadmin_role
 }
 
 resource "snowflake_grant_privileges_to_account_role" "grant_evidence_usage_on_warehouse" {
@@ -404,6 +419,11 @@ resource "snowflake_user" "count_user" {
 resource "snowflake_grant_account_role" "grant_count_role_to_user" {
   role_name = snowflake_account_role.count_role.name
   user_name = snowflake_user.count_user.name
+}
+
+resource "snowflake_grant_account_role" "grant_count_role_to_sysadmin" {
+  role_name        = snowflake_account_role.count_role.name
+  parent_role_name = local.sysadmin_role
 }
 
 resource "snowflake_grant_privileges_to_account_role" "grant_count_usage_on_warehouse" {
