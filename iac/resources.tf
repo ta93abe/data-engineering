@@ -72,7 +72,7 @@ resource "snowflake_grant_account_role" "grant_role_to_user" {
 
 resource "snowflake_grant_privileges_to_account_role" "grant_usage_on_database" {
   account_role_name = snowflake_account_role.dbt_role.name
-  privileges        = ["USAGE"]
+  privileges        = ["USAGE", "CREATE SCHEMA"]
   on_account_object {
     object_type = "DATABASE"
     object_name = snowflake_database.production_database.name
@@ -164,7 +164,7 @@ resource "snowflake_grant_privileges_to_account_role" "grant_all_on_future_funct
 # SYSADMIN grants for DEVELOPMENT_DB
 resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_usage_on_development_database" {
   account_role_name = local.sysadmin_role
-  privileges        = ["USAGE"]
+  privileges        = ["USAGE", "CREATE SCHEMA"]
   on_account_object {
     object_type = "DATABASE"
     object_name = snowflake_database.development_database.name
