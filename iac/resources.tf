@@ -313,3 +313,74 @@ resource "snowflake_network_policy" "allow_steep_connection" {
   comment                   = "Allow incoming connections from Steep"
   allowed_network_rule_list = [snowflake_network_rule.enable_incoming_from_steep.fully_qualified_name]
 }
+
+resource "snowflake_warehouse" "evidence_warehouse" {
+  name           = "EVIDENCE_WH"
+  warehouse_size = "XSMALL"
+}
+
+resource "snowflake_account_role" "evidence_role" {
+  name = "EVIDENCE_ROLE"
+}
+
+resource "snowflake_user" "evidence_user" {
+  name              = "EVIDENCE"
+  login_name        = "EVIDENCE"
+  default_role      = snowflake_account_role.evidence_role.name
+  default_warehouse = snowflake_warehouse.evidence_warehouse.name
+  rsa_public_key    = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4wDibJhD0RhVNY7gSJecoB6W3zwzDQ+neWPfdMb6jTk+noczv8JiYsc47khQ1E1t74w28uWKvEwcnDv4cS5gVUuH5U+jozp7JZrf89tAeRMoevw5Luae6vWNOBK0qpAM51BU0/wgxq19ZbebFsmlmk8eswKKlJzTWMhQD7gFKNj3sw9Ces5IV0ESfnqkmoKck6Cy199WJA6NWE+LSCx1NXlNTVkIUyBvgLuRQJl9JwQ9wnrG5P3rvWl6ENWxlGEjx5TTzMWZE6NrJzsD9Z4WIAZUf1fu6mlXNlOQI3rZNIWY693wBlD/soPKVjD1bxOZbpNaag+JHB4/U99YROgwrwIDAQAB"
+}
+
+resource "snowflake_grant_account_role" "grant_evidence_role_to_user" {
+  role_name = snowflake_account_role.evidence_role.name
+  user_name = snowflake_user.evidence_user.name
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_evidence_usage_on_warehouse" {
+  account_role_name = snowflake_account_role.evidence_role.name
+  privileges        = ["USAGE", "OPERATE"]
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.evidence_warehouse.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_evidence_usage_on_production_database" {
+  account_role_name = snowflake_account_role.evidence_role.name
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.production_database.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_evidence_usage_on_marts_schema" {
+  account_role_name = snowflake_account_role.evidence_role.name
+  privileges        = ["USAGE"]
+  on_schema {
+    schema_name = snowflake_schema.marts_schema_in_production.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_evidence_select_on_all_tables_in_marts" {
+  account_role_name = snowflake_account_role.evidence_role.name
+  privileges        = ["SELECT"]
+  on_schema_object {
+    all {
+      object_type_plural = "TABLES"
+      in_schema          = snowflake_schema.marts_schema_in_production.fully_qualified_name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_evidence_select_on_future_tables_in_marts" {
+  account_role_name = snowflake_account_role.evidence_role.name
+  privileges        = ["SELECT"]
+  on_schema_object {
+    future {
+      object_type_plural = "TABLES"
+      in_schema          = snowflake_schema.marts_schema_in_production.fully_qualified_name
+    }
+  }
+}
+
