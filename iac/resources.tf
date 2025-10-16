@@ -277,4 +277,24 @@ resource "snowflake_grant_privileges_to_account_role" "grant_sysadmin_all_on_fut
   }
 }
 
+resource "snowflake_warehouse" "steep_warehouse" {
+  name           = "STEEP_WH"
+  warehouse_size = "XSMALL"
+}
+
+resource "snowflake_account_role" "steep_role" {
+  name = "STEEP_ROLE"
+}
+
+resource "snowflake_user" "steep_user" {
+  name              = "STEEP"
+  login_name        = "STEEP"
+  default_role      = snowflake_account_role.steep_role.name
+  default_warehouse = snowflake_warehouse.steep_warehouse.name
+}
+
+resource "snowflake_user_programmatic_access_token" "steep_access_token" {
+  user = snowflake_user.steep_user.name
+  name = "STEEP_TOKEN"
+}
 
