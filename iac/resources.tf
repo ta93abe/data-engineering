@@ -384,3 +384,73 @@ resource "snowflake_grant_privileges_to_account_role" "grant_evidence_select_on_
   }
 }
 
+resource "snowflake_warehouse" "count_warehouse" {
+  name           = "COUNT_WH"
+  warehouse_size = "XSMALL"
+}
+
+resource "snowflake_account_role" "count_role" {
+  name = "COUNT_ROLE"
+}
+
+resource "snowflake_user" "count_user" {
+  name              = "COUNT"
+  login_name        = "COUNT"
+  default_role      = snowflake_account_role.count_role.name
+  default_warehouse = snowflake_warehouse.count_warehouse.name
+  rsa_public_key    = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoRy6f/KJRARP4ENEp72XlMXpTYcKp67/QyHO6wd8IXY7N9b74/srPhCO5JELRA5Rw+NWkQv5PZyLlrr8dB0KLvwQQ8qI1YNFNcPzRA/+QeS1yZ7Femi60/HT2I6NKNLDB47uaDxpTUHnbu3Vu0JSDMoBdK3EtDHvspkbPVsGVpZ/j+kxvlHfgMuT3yMLdpM9Qb1VPFWdCtc7F2/vS/twbAeOOwydwp6IHG8hHwp9hVxKl1fPDeP5NU49r/g7/l9NiRlYx0gbHE08v5e2qkjdJNwZDK1FFd/Vy5TqZFsxh454J3PbQYi5z/7ifANsZcR5NgIOlCRYZO40aba97uiQywIDAQAB"
+}
+
+resource "snowflake_grant_account_role" "grant_count_role_to_user" {
+  role_name = snowflake_account_role.count_role.name
+  user_name = snowflake_user.count_user.name
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_count_usage_on_warehouse" {
+  account_role_name = snowflake_account_role.count_role.name
+  privileges        = ["USAGE", "OPERATE"]
+  on_account_object {
+    object_type = "WAREHOUSE"
+    object_name = snowflake_warehouse.count_warehouse.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_count_usage_on_production_database" {
+  account_role_name = snowflake_account_role.count_role.name
+  privileges        = ["USAGE"]
+  on_account_object {
+    object_type = "DATABASE"
+    object_name = snowflake_database.production_database.name
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_count_usage_on_marts_schema" {
+  account_role_name = snowflake_account_role.count_role.name
+  privileges        = ["USAGE"]
+  on_schema {
+    schema_name = "\"${snowflake_database.production_database.name}\".\"${snowflake_schema.marts_schema_in_production.name}\""
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_count_select_on_all_tables_in_marts" {
+  account_role_name = snowflake_account_role.count_role.name
+  privileges        = ["SELECT"]
+  on_schema_object {
+    all {
+      object_type_plural = "TABLES"
+      in_schema          = snowflake_schema.marts_schema_in_production.fully_qualified_name
+    }
+  }
+}
+
+resource "snowflake_grant_privileges_to_account_role" "grant_count_select_on_future_tables_in_marts" {
+  account_role_name = snowflake_account_role.count_role.name
+  privileges        = ["SELECT"]
+  on_schema_object {
+    future {
+      object_type_plural = "TABLES"
+      in_schema          = snowflake_schema.marts_schema_in_production.fully_qualified_name
+    }
+  }
+}
+
